@@ -62,4 +62,4 @@ const TradingViewChart = () => {
 };
 
 // React.memo prevents the component from re-rendering unnecessarily
-export default memo(TradingViewChart);
+export default memo(TradingViewChart); 
