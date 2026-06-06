@@ -1,7 +1,6 @@
 import feedparser
 import schedule
 import time
-from datetime import datetime
 import email.utils
 from datetime import datetime
 from app.database.db_manager import save_news
