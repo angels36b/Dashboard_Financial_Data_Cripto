@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.middleware.cros import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 #1. Create the instance of server
 app = FastAPI(title="Solana Data API")
@@ -22,3 +22,39 @@ def get_db_connection():
     return conn
 
 
+@app.get("/api/news")
+def get_latest_news():
+    """
+    extract the last 10 news from the database
+    """
+    try: 
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        #Consulta SQL: bring everything from the table, sorted from the newest to the oldest
+        cursor.execute('''
+        SELECT source, headline, impact, published_at
+        FROM geopolitical_news
+        ORDER BY id DESC
+        LIMIT 10
+        ''')
+        rows = cursor.fetchall()
+        conn.close()
+
+        #we convert the sql ROWS IN THE LIST OF PYTHON DICTIONARY
+        news_list = [dict(row) for row in rows]
+        return {"status": "success", "data": news_list}
+    
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
+def read_root():
+    """
+    Rute path (health check). confirm that the API is alive
+    """
+    return{
+        "status": "online",
+        "message": "добро пожаловать",
+        "data_endpoint": "/api/news"
+    }
+        
