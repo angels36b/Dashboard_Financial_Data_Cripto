@@ -3,6 +3,9 @@ import schedule
 import time
 from datetime import datetime
 import email.utils
+from datetime import datetime
+from app.database.db_manager import save_news
+
 print("🚀Init SCRIPT: Data Agent Online.")
 
 RSS_FEEDS = {
@@ -64,6 +67,8 @@ def fetch_and_filter_news():
             impact_icon = "🔴" if item['impact'] == 'high' else "🟡" if item['impact'] == 'medium' else "🔵"
             # 👈 NEW: Printing the date on the screen
             print(f"  {impact_icon} [{item['date']}] [{item['source']}] {item['headline']}")
+        saved_count = save_news(relevant_news)
+        print(f"Saved{saved_count} new articles to tha database")
     else:
         print("💤 No relevant news found in this cycle.")
 
