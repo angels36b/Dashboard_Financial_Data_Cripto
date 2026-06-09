@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import TradingViewChart from './features/tradingview/TradingViewChart';
 import TradingChart from './components/TradingChart';
+import GeopoliticalPanel from './components/GeoPolitic';
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
           </div>
           <div className="panel" style={{ justifyContent: 'flex-start' }}>
             <div className="panel-header">🌍 Geopolitical & Macro Events</div>
-            <p>Political comments and alerts will appear here...</p>
+            <GeopoliticalPanel />
           </div>
         </section>
 

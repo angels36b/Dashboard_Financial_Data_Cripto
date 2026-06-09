@@ -1,19 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
-#1. Create the instance of server
+#1. Create the instance of server, your name is App
 app = FastAPI(title="Solana Data API")
 
 #configurate the middleware to Cors
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], #allows any frontend to connect
+    allow_origins=origins, #allows any frontend to connect
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers = ["Authorization", "Content-Type"],
 )
 
 DB_PATH = "app/database/market_data.db"
+
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
