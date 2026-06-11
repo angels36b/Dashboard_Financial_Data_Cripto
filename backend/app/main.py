@@ -92,3 +92,30 @@ def get_macro_indicators():
     except Exception as e:
         #Si algo falla en la BD, lo informamos al frontEnd
         return {"status": "error", "message":str(e)}
+
+@app.get("/api/whales")
+def get_whale_flows():
+    """
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        cursor.execute(
+        """
+            SELECT direction, amount, exchange, timestamp
+            FROM whale_flows
+            ORDER BY id DESC
+            LIMIT 10
+        """
+        )
+        rows = cursor.fetchall()
+        conn.close()
+
+        whale_data = [dict(row) for row in rows]
+        return {"status": "success", "data": whale_data}
+    
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
