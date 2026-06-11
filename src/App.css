@@ -1,4 +1,6 @@
-/* Basic reset and dark background */
+/* =========================================
+   1. RESET Y VARIABLES GLOBALES
+   ========================================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,17 +11,19 @@ body {
   background-color: #131722;
   color: #D1D4DC;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden; /* Evita scrolls dobles feos en el navegador */
 }
 
-/* Main container */
+/* =========================================
+   2. ESTRUCTURA PRINCIPAL (LAYOUT)
+   ========================================= */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
+  width: 100%;
 }
 
-/* Top Bar (Header) */
 .top-bar {
   display: flex;
   justify-content: space-between;
@@ -29,75 +33,157 @@ body {
   background-color: #1E222D;
   border-bottom: 1px solid #2A2E39;
   font-weight: 600;
+  flex-shrink: 0; /* Evita que la barra superior se aplaste */
 }
 
-/* --- NEW HORIZONTAL LAYOUT --- */
+/* El área principal donde ocurre el scroll */
 .main-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  height: calc(100vh - 60px);
-  overflow-y: auto; /* Allows scrolling on laptop screens */
+  align-items: stretch;
+  gap: 24px;
+  padding: 24px;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-y: auto;
 }
 
-/* Row 1: Charts (50% - 50%) */
+/* =========================================
+   3. SISTEMA DE CUADRÍCULAS (GRIDS)
+   ========================================= */
+/* Fila de Gráficos: 2 columnas iguales */
 .charts-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  min-height: 450px; /* Ideal height for charts */
+  gap: 24px;
+  min-height: 400px;
 }
 
-/* Row 2: LLM News (50% - 50%) */
-.llm-news-row {
+/* Filas de Ancho Completo (LLM y Geopolítica) */
+.full-width-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  min-height: 250px;
+  grid-template-columns: 1fr;
+  width: 100%;
 }
 
-/* Row 3: Indicators (Auto-adjusting cards) */
+/* Fila de Indicadores: Inteligente, se adapta según el espacio */
 .indicators-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 }
 
-/* --- PANEL STYLES --- */
+/* =========================================
+   4. COMPONENTES (PANELES)
+   ========================================= */
+/* Base para todos los paneles */
 .panel {
   background-color: #1E222D;
   border-radius: 8px;
   border: 1px solid #2A2E39;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   color: #787B86;
   overflow: hidden;
-  padding: 16px;
+}
+
+/* Sub-clase para paneles de texto (las noticias nacen desde la izquierda) */
+.text-panel {
+  align-items: stretch; /* Estira el contenido al 100% de ancho interno */
+  padding: 0; /* El padding lo maneja el componente interno */
+}
+
+/* Sub-clase para indicadores (texto centrado) */
+.indicator-panel {
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  min-height: 140px;
+}
+
+/* Sub-clase para gráficos */
+.chart-panel {
+  align-items: stretch;
 }
 
 .panel-header {
   width: 100%;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 600;
   color: #D1D4DC;
-  margin-bottom: 12px;
-  text-align: left;
+  background-color: #1a1e26;
+  padding: 12px 16px;
   border-bottom: 1px solid #2A2E39;
-  padding-bottom: 8px;
+  text-align: left;
 }
 
-/* --- RESPONSIVE DESIGN (For smaller screens) --- */
+.panel-content {
+  padding: 16px;
+}
+
+/* =========================================
+   5. DISEÑO INTERNO DEL PANEL GEOPOLÍTICO 
+   ========================================= */
+.geopolitical-panel {
+  padding: 16px;
+  width: 100%;
+}
+
+.geopolitical-panel h2 {
+  display: none; /* Ocultamos el H2 nativo porque ya usamos .panel-header en App.jsx */
+}
+
+.news-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px; /* Limita la altura para no invadir el dashboard */
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Scrollbar estilizada */
+.news-feed::-webkit-scrollbar { width: 6px; }
+.news-feed::-webkit-scrollbar-thumb { background: #2A2E39; border-radius: 4px; }
+
+.news-card {
+  display: flex;
+  align-items: flex-start;
+  background-color: #252833;
+  padding: 14px;
+  border-radius: 6px;
+  border-left: 3px solid #34D399;
+  width: 100%;
+}
+
+.impact-indicator { min-width: 30px; font-size: 1.1rem; }
+.source-badge { min-width: 120px; color: #787B86; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; padding-top: 2px; }
+.headline { margin: 0; flex-grow: 1; text-align: justify; line-height: 1.5; font-size: 0.95rem; color: #D1D4DC; }
+
+/* =========================================
+   6. RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================= */
+/* Cuando la pantalla se encoge (Laptops pequeñas o Tablets) */
 @media (max-width: 1024px) {
-  .charts-row, .llm-news-row {
-    grid-template-columns: 1fr; /* Stacks the windows vertically */
-  }
   .charts-row {
+    grid-template-columns: 1fr; /* Los gráficos pasan a 1 sola columna */
     min-height: auto;
   }
-  .panel {
-    min-height: 300px;
+}
+
+/* Cuando es un dispositivo móvil */
+@media (max-width: 768px) {
+  .main-layout {
+    padding: 12px; /* Reducimos bordes para ganar espacio */
+  }
+  
+  /* Permite que las tarjetas de noticias se apilen verticalmente si la pantalla es ultra delgada */
+  .news-card {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .source-badge {
+    padding-top: 0;
   }
 }

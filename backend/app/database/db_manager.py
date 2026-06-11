@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from datetime import datetime
 
 # Define the path to the database file (it will create it if it doesn't exist)
 DB_PATH = "app/database/market_data.db"
@@ -56,6 +57,51 @@ def save_news(news_list):
     conn.close()
     return saved_count
 
+def init_macro_table():
+    """
+    We use indicator_name how unique key
+    """
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS macro_indicators (
+            indicator_name TEXT PRIMARY KEY,
+            actual_value REAL,
+            forecast_value REAL,
+            surprise REAL,
+            updated_at TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def save_macro_indicators(indicators_list):
+    """
+    Metod 2: Inyector
+    Receives a list of dictionaries with the calculations 
+    already made by the agent and injects them into the database
+    """
+    conn =sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    current_time = datetime.now().strftime("%D %H:%M:%S")
+
+    for item in indicators_list:
+        cursor.execute('''
+            INSERT OR REPLACE INTO macro_indicators
+            (indicator_name, actual_value, forecast_value, surprise, updated_at)
+            VALUE (?, ?, ?, ?, ?)
+        ''',(
+            item['name'],
+            item['actual'],
+            item['forecast'],
+            item['surprise'],
+            current_time)
+        )
+    conn.commit()
+    conn.close()
+    print(f"BD: {len(indicators_list)} update macro indicators")
 # If we run this file directly, just initialize the database
 if __name__ == "__main__":
     init_db()
