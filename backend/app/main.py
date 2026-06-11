@@ -64,3 +64,31 @@ def read_root():
         "data_endpoint": "/api/news"
     }
         
+@app.get("/api/macro")
+def get_macro_indicators():
+    """
+    Extrae los indicadores macro de la base de datos
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        #pedimos los datos
+        cursor.execute(
+        """
+        SELECT indicator_name, actual_value, forecast_value, surprise, updated_at
+        FROM macro_indicators
+        ORDER BY indicator_name 
+        """
+        )
+        rows = cursor.fetchall()
+        conn.close()
+
+        #empaquetamos todo en una lista de diccionarios JSON
+        macro_data = [dict(row) for row in rows]
+        #Enviamos la respuesta exitosa
+        return {"status": "success", "data": macro_data}
+    
+    except Exception as e:
+        #Si algo falla en la BD, lo informamos al frontEnd
+        return {"status": "error", "message":str(e)}

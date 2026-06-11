@@ -91,7 +91,7 @@ def save_macro_indicators(indicators_list):
         cursor.execute('''
             INSERT OR REPLACE INTO macro_indicators
             (indicator_name, actual_value, forecast_value, surprise, updated_at)
-            VALUE (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?)
         ''',(
             item['name'],
             item['actual'],
@@ -102,6 +102,54 @@ def save_macro_indicators(indicators_list):
     conn.commit()
     conn.close()
     print(f"BD: {len(indicators_list)} update macro indicators")
+
+def init_whale_table():
+    """
+    Crea la tabla para restrear ballenas
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS whale_flows(
+        
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            direction TEXT,  -- Ej: "Long", "Short", "Transfer"
+            amount REAL,        -- Ej 1000
+            exchange TEXT,       -- Ej: "Binance", "Coinbase", "Wallet Desconocida"
+            timestamp TEXT       -- Hora exacta de la transacción
+            )
+    
+    ''')
+    conn.commit()
+    conn.close()
+
+def save_whale_flows(flows_list):
+    """
+    Inyecta el floujo de ballenas en la base de datos
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    current_time = datetime.now().strftime("%D %H:%M:%S")
+
+    for item in flows_list:
+        cursor.execute(
+            '''
+            INSERT INTO whale_flows (direction, amount, exchange, timestamp)
+            VALUES (?,?,?,?)            
+                ''',(
+            item['direction'],
+            item['amount'],
+            item['exchange'],
+            current_time
+    ))
+    
+    conn.commit()
+    conn.close()
+    print(f"BD: {len(flows_list)} transaccion registrada")
+    
+
 # If we run this file directly, just initialize the database
 if __name__ == "__main__":
     init_db()
