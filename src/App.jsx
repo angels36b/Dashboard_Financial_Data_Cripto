@@ -3,7 +3,7 @@ import './App.css';
 import TradingViewChart from './features/tradingview/TradingViewChart';
 import TradingChart from './components/TradingChart';
 import GeopoliticalPanel from './components/GeoPolitic';
-
+import MacroIndicators from './components/MacroIndicators;'
 
 
 function App() {
