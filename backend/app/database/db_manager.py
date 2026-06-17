@@ -58,19 +58,22 @@ def save_news(news_list):
     return saved_count
 
 def init_macro_table():
-    """
-    We use indicator_name how unique key
-    """
-
+    
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
+    
+    # 🔴 1. LA ORDEN DE DEMOLICIÓN DE LA TABLA VIEJA
+    cursor.execute('DROP TABLE IF EXISTS macro_indicators')
+    
+    # 🔴 2. LA CONSTRUCCIÓN DE LA TABLA NUEVA (Con event_date y status)
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS macro_indicators (
+        CREATE TABLE macro_indicators (
             indicator_name TEXT PRIMARY KEY,
-            actual_value REAL,
-            forecast_value REAL,
+            actual_value TEXT,
+            forecast_value TEXT,
             surprise REAL,
-            updated_at TEXT
+            event_date TEXT,
+            status TEXT
         )
     ''')
     conn.commit()
@@ -79,26 +82,24 @@ def init_macro_table():
 def save_macro_indicators(indicators_list):
     """
     Metod 2: Inyector
-    Receives a list of dictionaries with the calculations 
-    already made by the agent and injects them into the database
+   We save
     """
     conn =sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    current_time = datetime.now().strftime("%D %H:%M:%S")
-
     for item in indicators_list:
         cursor.execute('''
-            INSERT OR REPLACE INTO macro_indicators
-            (indicator_name, actual_value, forecast_value, surprise, updated_at)
-            VALUES (?, ?, ?, ?, ?)
-        ''',(
-            item['name'],
-            item['actual'],
-            item['forecast'],
-            item['surprise'],
-            current_time)
-        )
+            INSERT OR REPLACE INTO macro_indicators 
+            (indicator_name, actual_value, forecast_value, surprise, event_date, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            item['name'], 
+            item['actual'], 
+            item['forecast'], 
+            item['surprise'], 
+            item['date'],
+            item['status']
+        ))
     conn.commit()
     conn.close()
     print(f"BD: {len(indicators_list)} update macro indicators")

@@ -67,31 +67,27 @@ def read_root():
 @app.get("/api/macro")
 def get_macro_indicators():
     """
-    Extrae los indicadores macro de la base de datos
+    Extrae los indicadores macro de la base de datos, incluyendo fechas y estado.
     """
     try:
         conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
+        conn.row_factory = sqlite3.Row 
         cursor = conn.cursor()
-        #pedimos los datos
-        cursor.execute(
-        """
-        SELECT indicator_name, actual_value, forecast_value, surprise, updated_at
-        FROM macro_indicators
-        ORDER BY indicator_name 
-        """
-        )
+        
+        # 🔴 ACTULIZADO: Pedimos las nuevas columnas event_date y status
+        cursor.execute("""
+            SELECT indicator_name, actual_value, forecast_value, surprise, event_date, status 
+            FROM macro_indicators 
+            ORDER BY event_date ASC, indicator_name ASC
+        """)
         rows = cursor.fetchall()
         conn.close()
-
-        #empaquetamos todo en una lista de diccionarios JSON
+        
         macro_data = [dict(row) for row in rows]
-        #Enviamos la respuesta exitosa
         return {"status": "success", "data": macro_data}
-    
+        
     except Exception as e:
-        #Si algo falla en la BD, lo informamos al frontEnd
-        return {"status": "error", "message":str(e)}
+        return {"status": "error", "message": str(e)}
 
 @app.get("/api/whales")
 def get_whale_flows():
@@ -106,7 +102,7 @@ def get_whale_flows():
         """
             SELECT direction, amount, exchange, timestamp
             FROM whale_flows
-            ORDER BY id DESC
+            ORDER BY timestamp DESC
             LIMIT 10
         """
         )

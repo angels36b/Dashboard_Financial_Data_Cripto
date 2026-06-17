@@ -11,7 +11,7 @@ body {
   background-color: #131722;
   color: #D1D4DC;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden; /* Evita scrolls dobles feos en el navegador */
+  overflow: hidden;
 }
 
 /* =========================================
@@ -33,10 +33,9 @@ body {
   background-color: #1E222D;
   border-bottom: 1px solid #2A2E39;
   font-weight: 600;
-  flex-shrink: 0; /* Evita que la barra superior se aplaste */
+  flex-shrink: 0;
 }
 
-/* El área principal donde ocurre el scroll */
 .main-layout {
   display: flex;
   flex-direction: column;
@@ -52,7 +51,6 @@ body {
 /* =========================================
    3. SISTEMA DE CUADRÍCULAS (GRIDS)
    ========================================= */
-/* Fila de Gráficos: 2 columnas iguales */
 .charts-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -60,14 +58,12 @@ body {
   min-height: 400px;
 }
 
-/* Filas de Ancho Completo (LLM y Geopolítica) */
 .full-width-row {
   display: grid;
   grid-template-columns: 1fr;
   width: 100%;
 }
 
-/* Fila de Indicadores: Inteligente, se adapta según el espacio */
 .indicators-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -75,9 +71,8 @@ body {
 }
 
 /* =========================================
-   4. COMPONENTES (PANELES)
+   4. COMPONENTES BASE (PANELES)
    ========================================= */
-/* Base para todos los paneles */
 .panel {
   background-color: #1E222D;
   border-radius: 8px;
@@ -88,24 +83,9 @@ body {
   overflow: hidden;
 }
 
-/* Sub-clase para paneles de texto (las noticias nacen desde la izquierda) */
-.text-panel {
-  align-items: stretch; /* Estira el contenido al 100% de ancho interno */
-  padding: 0; /* El padding lo maneja el componente interno */
-}
-
-/* Sub-clase para indicadores (texto centrado) */
-.indicator-panel {
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  min-height: 140px;
-}
-
-/* Sub-clase para gráficos */
-.chart-panel {
-  align-items: stretch;
-}
+.text-panel { align-items: stretch; padding: 0; }
+.indicator-panel { align-items: center; justify-content: center; padding: 24px 16px; min-height: 140px; }
+.chart-panel { align-items: stretch; }
 
 .panel-header {
   width: 100%;
@@ -118,32 +98,23 @@ body {
   text-align: left;
 }
 
-.panel-content {
-  padding: 16px;
-}
+.panel-content { padding: 16px; }
 
 /* =========================================
-   5. DISEÑO INTERNO DEL PANEL GEOPOLÍTICO 
+   5. DISEÑO DEL PANEL GEOPOLÍTICO 
    ========================================= */
-.geopolitical-panel {
-  padding: 16px;
-  width: 100%;
-}
-
-.geopolitical-panel h2 {
-  display: none; /* Ocultamos el H2 nativo porque ya usamos .panel-header en App.jsx */
-}
+.geopolitical-panel { padding: 16px; width: 100%; }
+.geopolitical-panel h2 { display: none; }
 
 .news-feed {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 300px; /* Limita la altura para no invadir el dashboard */
+  max-height: 300px;
   overflow-y: auto;
   padding-right: 8px;
 }
 
-/* Scrollbar estilizada */
 .news-feed::-webkit-scrollbar { width: 6px; }
 .news-feed::-webkit-scrollbar-thumb { background: #2A2E39; border-radius: 4px; }
 
@@ -164,26 +135,81 @@ body {
 /* =========================================
    6. RESPONSIVE DESIGN (MEDIA QUERIES)
    ========================================= */
-/* Cuando la pantalla se encoge (Laptops pequeñas o Tablets) */
 @media (max-width: 1024px) {
-  .charts-row {
-    grid-template-columns: 1fr; /* Los gráficos pasan a 1 sola columna */
-    min-height: auto;
-  }
+  .charts-row { grid-template-columns: 1fr; min-height: auto; }
 }
 
-/* Cuando es un dispositivo móvil */
 @media (max-width: 768px) {
-  .main-layout {
-    padding: 12px; /* Reducimos bordes para ganar espacio */
-  }
-  
-  /* Permite que las tarjetas de noticias se apilen verticalmente si la pantalla es ultra delgada */
-  .news-card {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .source-badge {
-    padding-top: 0;
-  }
+  .main-layout { padding: 12px; }
+  .news-card { flex-direction: column; gap: 8px; }
+  .source-badge { padding-top: 0; }
 }
+
+/* =========================================
+   7. INDICADORES MACRO (ESTILOS SMC)
+   ========================================= */
+.dynamic-indicator {align-items: stretch; padding: 16px; }
+.indicator-header {display: flex; justify-content: space-between; border-bottom: 1px solid #2A2E39; padding-bottom: 8px; margin-bottom: 12px;}
+.indicator-title {font-weight: bold; color: #D1D4DC; font-size: 0.95rem;}
+.indicator-time {font-size: 0.75rem; color: #787B86; font-family:monospace;}
+
+.value-container { display: flex; flex-direction: column; align-items: center; margin: 5px 0; }
+.actual-value {text-align: center; font-size: 2.2rem; color: #E2E8F0; margin:10px 0;}
+.value-faded { color: #787B86 !important; }
+
+.status-badge {
+  background-color: #2A2E39;
+  color: #8c8fa3;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+
+.macro-details {display: flex; justify-content: space-between; font-size: 0.85rem; margin-top: auto; padding-top: 12px; border-top: 1px dashed #2A2E39;}
+.forecast-text {color: #8c8fa3;}
+.surprise-positive { color: #34D399; font-weight: bold; } 
+.surprise-negative { color: #F87171; font-weight: bold; } 
+.surprise-neutral { color: #787B86; }
+
+/* =========================================
+   8. FLUJO DE BALLENAS (ORDER FLOW TAPE)
+   ========================================= */
+.whale-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 250px;
+  overflow-y: auto;
+  width: 100%;
+}
+.whale-list::-webkit-scrollbar { width: 6px; }
+.whale-list::-webkit-scrollbar-thumb { background: #2A2E39; border-radius: 4px; }
+
+.whale-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  background-color: #1E222D;
+  border-radius: 6px;
+  border-left: 4px solid transparent; 
+}
+
+.whale-left { display: flex; align-items: center; gap: 12px; }
+.whale-details { display: flex; flex-direction: column; }
+.whale-right { display: flex; flex-direction: column; align-items: flex-end; }
+
+.whale-icon { font-size: 1.2rem; }
+.whale-type { font-weight: bold; font-size: 0.9rem; color: #D1D4DC; }
+.whale-exchange { font-size: 0.75rem; color: #787B86; font-family: monospace; }
+.whale-amount { font-weight: bold; font-size: 0.95rem; color: #FFFFFF; font-family: monospace; }
+.whale-time { font-size: 0.75rem; color: #787B86; font-family: monospace; }
+
+/* Colores de Dirección SMC */
+.dir-long { border-left-color: #26A69A; }
+.dir-short { border-left-color: #EF5350; }
+.dir-neutral { border-left-color: #787B86; }

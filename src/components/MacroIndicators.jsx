@@ -21,25 +21,41 @@ const MacroIndicators = () => {
   return (
     <section className="indicators-row">
       {indicators.map((ind, index) => {
-        // Lógica condicional para inyectar colores SMC
-        const isPositive = ind.surprise > 0;
-        const isNegative = ind.surprise < 0;
+        // 1. ESCUDO DEFENSIVO: Si la variable viene nula, asignamos un valor por defecto
+        const status = ind.status || "Actual";
+        const surprise = ind.surprise || 0;
+        const actualValue = ind.actual_value || "N/A";
+        const forecastValue = ind.forecast_value || "N/A";
+        const eventDate = ind.event_date || "";
+        const indicatorName = ind.indicator_name || "Dato Desconocido";
+
+        // 2. LÓGICA DE ESTADOS
+        const isPrevious = status === "Anterior";
+        
+        const isPositive = !isPrevious && surprise > 0;
+        const isNegative = !isPrevious && surprise < 0;
+        
         const surpriseClass = isPositive ? 'surprise-positive' : isNegative ? 'surprise-negative' : 'surprise-neutral';
         const surpriseSign = isPositive ? '+' : '';
 
         return (
           <div key={index} className="panel indicator-panel dynamic-indicator">
             <div className="indicator-header">
-              <span className="indicator-title">{ind.indicator_name}</span>
-              <span className="indicator-time">{ind.updated_at.split(' ')[1]}</span>
+              <span className="indicator-title">{indicatorName}</span>
+              <span className="indicator-time">{eventDate}</span>
             </div>
             
-            <h2 className="actual-value">{ind.actual_value}</h2>
+            <div className="value-container">
+               <h2 className={`actual-value ${isPrevious ? 'value-faded' : ''}`}>
+                 {actualValue}
+               </h2>
+               {isPrevious && <span className="status-badge">Dato Anterior</span>}
+            </div>
             
             <div className="macro-details">
-              <span className="forecast-text">Prev: {ind.forecast_value}</span>
+              <span className="forecast-text">Prev: {forecastValue}</span>
               <span className={`surprise-text ${surpriseClass}`}>
-                {surpriseSign}{ind.surprise} {isPositive ? '🔼' : isNegative ? '🔽' : '➖'}
+                {surpriseSign}{surprise} {isPositive ? '🔼' : isNegative ? '🔽' : '➖'}
               </span>
             </div>
           </div>
