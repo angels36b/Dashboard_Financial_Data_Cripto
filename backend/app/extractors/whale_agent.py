@@ -45,7 +45,7 @@ def fetch_free_onchain_whales():
                 
                 trade_time = datetime.fromtimestamp(tx['time']).strftime('%Y-%m-%d %H:%M:%S')
                 
-                # 🔴 LA LÍNEA CRÍTICA QUE FALTABA: Agregar el diccionario a la lista
+                #LA LÍNEA CRÍTICA QUE FALTABA: Agregar el diccionario a la lista
                 whale_orders.append({
                     "direction": direction,
                     "amount": round(amount_btc, 2),
@@ -58,26 +58,26 @@ def fetch_free_onchain_whales():
         return whale_orders
 
     except Exception as e:
-        print(f"❌ Error al obtener datos de la Blockchain: {e}")
+        print(f" Error al obtener datos de la Blockchain: {e}")
         return []
 
 def process_and_save_whales():
-    print("🐋 Whale Agent: Escaneando la red Bitcoin en busca de transferencias masivas...")
+    print("Whale Agent: Escaneando la red Bitcoin en busca de transferencias masivas...")
     
     real_data = fetch_free_onchain_whales()
     
     if not real_data:
-        print(f"⚠️ El mercado está tranquilo. No hay transacciones > {WHALE_THRESHOLD_BTC} BTC ahora mismo.")
+        print(f" El mercado está tranquilo. No hay transacciones > {WHALE_THRESHOLD_BTC} BTC ahora mismo.")
         return
         
     for item in real_data:
-        print(f"   🚨 {item['direction'].upper()} | {item['amount']} BTC | {item['exchange']}")
+        print(f"   {item['direction'].upper()} | {item['amount']} BTC | {item['exchange']}")
         
     # Inyectamos a la base de datos
     save_whale_flows(real_data)
 
 if __name__ == "__main__":
-    print("🚀 INICIANDO RASTREADOR DE ORDER FLOW (100% GRATIS)...")
+    print(" INICIANDO RASTREADOR DE ORDER FLOW (100% GRATIS)...")
     init_whale_table()
     process_and_save_whales()
     print("✅ Escaneo On-Chain finalizado.")

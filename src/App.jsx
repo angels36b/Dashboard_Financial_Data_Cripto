@@ -12,8 +12,8 @@ function App() {
     <div className="dashboard-container">
       {/* MAIN HEADER */}
       <header className="top-bar">
-        <div className="status">🟢 Data Agent: Online</div>
-        <div className="tickers">DXY: 104.50 &nbsp;|&nbsp; BTC: $64,200 &nbsp;|&nbsp; SOL: $145.30</div>
+        <div className="status">Economic Analisis</div>
+        <div className="tickers"> You have the power</div>
       </header>
 
       {/* SCROLLABLE CONTENT AREA */}
@@ -24,12 +24,12 @@ function App() {
           <div className="panel chart-panel">
             {/* The chart fills the entire panel without margins */}
            
-            <div className="panel-header">📊 Market Chart</div>           
+            <div className="panel-header"> Market Chart</div>           
                <TradingViewChart />
           </div>
 
           <div className="panel chart-panel">
-            <div className="panel-header">📈 Solana ML Prediction (Python)</div>
+            <div className="panel-header">Solana ML Prediction (Python)</div>
             <p style={{ padding: '16px' }}>Predictive Chart Placeholder</p>
           </div>
         </section>
@@ -37,7 +37,7 @@ function App() {
         {/* ROW 2: LLM WINDOW (Fila independiente, 100% ancho) */}
         <section className="full-width-row">
           <div className="panel text-panel">
-            <div className="panel-header">🧠 LLM Market Sentiment</div>
+            <div className="panel-header"> LLM Market Sentiment</div>
             <div className="panel-content">
               <p>Sentiment analysis data will appear here...</p>
             </div>
@@ -47,7 +47,7 @@ function App() {
         {/* ROW 3: GEOPOLITICAL (Fila independiente, 100% ancho) */}
         <section className="full-width-row">
           <div className="panel text-panel">
-            <div className="panel-header">📊 News dayli</div> 
+            <div className="panel-header"> News dayli</div> 
             <GeopoliticalPanel />
           </div>
         </section>
@@ -59,7 +59,7 @@ function App() {
         {/*Institutional Order Flow*/}
         <section className="full-width-row" style={{marginTop: '20px'}}>
           <div className = "panel text-panel">
-            <div className="panel-header">🐋 Institutional Order Flow (Whales) </div>
+            <div className="panel-header"> Institutional Order Flow (Whales) </div>
             <WhaleFlow/>
           </div>
         </section>

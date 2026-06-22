@@ -12,14 +12,14 @@ const GeopoliticalPanel = () => {
       try {
         const response = await fetch('http://127.0.0.1:8000/api/news');
         const result = await response.json();
-        console.log("🔴 DATOS RECIBIDOS DE PYTHON:", result);
+        console.log(" DATOS RECIBIDOS DE PYTHON:", result);
 
         if (result.status === "success") {
           setNews(result.data);
         }
       } catch (error) {
         console.error("Error connecting to the API:", error);
-        console.error("🔴 ERROR DE CONEXIÓN:", error);
+        console.error(" ERROR DE CONEXIÓN:", error);
       } finally {
         setLoading(false);
       }

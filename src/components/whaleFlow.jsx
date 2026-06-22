@@ -28,7 +28,7 @@ const WhaleFlow = () => {
 
   return (
     <div className="panel whale-panel">
-      <h3 className="panel-title">🐋 Institutional Order Flow</h3>
+      <h3 className="panel-title"> Institutional Order Flow</h3>
       
       <div className="whale-list">
         {whales.map((whale, index) => {

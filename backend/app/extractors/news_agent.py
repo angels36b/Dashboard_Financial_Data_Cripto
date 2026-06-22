@@ -58,21 +58,21 @@ def fetch_and_filter_news():
                         "date": clean_date # Saving the date
                     })
         except Exception as e:
-            print(f"❌ Error with {source_name}: {e}")
+            print(f" Error with {source_name}: {e}")
 
     if relevant_news:
-        print(f"✅ Found {len(relevant_news)} relevant events:")
+        print(f" Found {len(relevant_news)} relevant events:")
         for item in relevant_news:
             impact_icon = "🔴" if item['impact'] == 'high' else "🟡" if item['impact'] == 'medium' else "🔵"
-            # 👈 NEW: Printing the date on the screen
+            # NEW: Printing the date on the screen
             print(f"  {impact_icon} [{item['date']}] [{item['source']}] {item['headline']}")
         #save data on database
         saved_count = save_news(relevant_news)
         print(f"Saved{saved_count} new articles to tha database")
     else:
-        print("💤 No relevant news found in this cycle.")
+        print(" No relevant news found in this cycle.")
 
 if __name__ == "__main__":
     
     fetch_and_filter_news()
-    print("\n🏁 PRUEBA TERMINADA.")
+    print("\n PRUEBA TERMINADA.")

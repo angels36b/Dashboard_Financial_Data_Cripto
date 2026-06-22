@@ -16,7 +16,11 @@ def fetch_real_macro_data():
         headers = {'User-Agent': 'Mozilla/5.0'}
         response = requests.get(FOREX_FACTORY_URL, headers=headers, timeout=10)
         response.raise_for_status()
-        
+       #print("\n--- XML download")
+       #print(response.text) #muestra el texto del XML
+       #print("----Finish------")
+
+
         root = ET.fromstring(response.content)
         processed_data = []
         
@@ -32,7 +36,7 @@ def fetch_real_macro_data():
                 actual_node = event.find('actual')
                 forecast_node = event.find('forecast')
                 previous_node = event.find('previous')
-                date_node = event.find('date') # 🔴 Extraemos la fecha del XML
+                date_node = event.find('date') #  Extraemos la fecha del XML
                 
                 name = title_node.text.strip() if title_node is not None and title_node.text else "Evento Desconocido"
                 event_date = date_node.text.strip() if date_node is not None and date_node.text else "Sin Fecha"
@@ -44,7 +48,7 @@ def fetch_real_macro_data():
                 if not forecast_str:
                     continue
                 
-                # 🔴 LA LÓGICA DE FALLBACK 
+                # FALLBACK logic 
                 if actual_str:
                     # El dato 
                     status = "Actual"
@@ -72,7 +76,7 @@ def fetch_real_macro_data():
         return processed_data
 
     except Exception as e:
-        print(f"❌ Error al obtener datos macro: {e}")
+        print(f" Error al obtener datos macro: {e}")
         return []
 
 def clean_number(value_str):
@@ -100,12 +104,12 @@ def clean_number(value_str):
         return 0.0
 
 def process_and_save_macro():
-    print("🤖 Macro Agent: Extrayendo datos reales del mercado...")
+    print(" Macro Agent: Extrayendo datos reales del mercado...")
     
     real_data = fetch_real_macro_data()
     
     if not real_data:
-        print("⚠️ No se encontraron datos macroeconómicos de alto impacto publicados esta semana.")
+        print(" No se encontraron datos macroeconómicos de alto impacto publicados esta semana.")
         return
 
     # Imprimimos en consola para auditoría
@@ -115,7 +119,7 @@ def process_and_save_macro():
     save_macro_indicators(real_data)
 
 if __name__ == "__main__":
-    print("🚀 INICIANDO SISTEMA MACROECONÓMICO (DATOS REALES)...")
+    print(" INICIANDO SISTEMA MACROECONÓMICO (DATOS REALES)...")
     init_macro_table()
     process_and_save_macro()
-    print("✅ Pipeline de extracción real finalizado.")
+    print(" Pipeline de extracción real finalizado.")
