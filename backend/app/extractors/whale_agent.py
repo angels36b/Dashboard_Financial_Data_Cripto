@@ -23,7 +23,8 @@ def fetch_free_onchain_whales():
         
         for tx in transactions:
             # 1. Sumamos los Satoshis y convertimos a BTC
-            total_sats = sum(out.get('value', 0) for out in tx.get('out', []))
+            total_sats = sum(out.get('value', 0) 
+            for out in tx.get('out', []))
             amount_btc = total_sats / 100_000_000
             
             # 2. Filtro Institucional
