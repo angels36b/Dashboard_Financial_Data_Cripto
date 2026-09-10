@@ -1,9 +1,66 @@
+import asyncio
+import sqlite3
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import sqlite3
-#1. Create the instance of server, your name is App
-app = FastAPI(title="Solana Data API")
+from app.database import db_manager
 
+from app.extractors import whale_agent, news_agent, macro_agent
+
+
+async def task_whales():
+    """Extract data from blockchain every 10 minutes"""
+    while True:
+        try:
+
+            #Reemplaza 
+            await asyncio.to_thread(whale_agent.process_and_save_whales)
+        except Exception as e:
+            print(f"Error in extract whale {e}")
+        await asyncio.sleep(600) #600 segundos = 10 minuts
+
+async def task_news():
+    """Extract financy new every 30 minuts"""
+
+    while True:
+        try:
+            await asyncio.to_thread(news_agent.fetch_and_filter_news)
+        except Exception as e:
+            print(f"Error in extract of News: {e}")
+        await asyncio.sleep(3600) #3600 Secunds = 1 hora.
+
+async def task_macro():
+    """Extract indicator macro every 12 hours"""
+    while True:
+        try:
+            # CORRECCIÓN: Llamamos a la función que descarga y GUARDA
+            await asyncio.to_thread(macro_agent.process_and_save_macro)
+        except Exception as e:
+            print(f"Error in extract macroEconomic: {e}")
+        await asyncio.sleep(43200) # 43200 segundos = 12 horas
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 1. Asegurar que las tablas existan AL INICIAR
+    db_manager.init_db()
+    db_manager.init_macro_table()
+    db_manager.init_whale_table()
+    # AL INICIAR DOCKER: Arrancamos los temporizadores
+    t_whales = asyncio.create_task(task_whales())
+    t_news = asyncio.create_task(task_news())
+    t_macro = asyncio.create_task(task_macro())
+    
+    yield # La API comienza a escuchar peticiones aquí
+    
+    # AL APAGAR DOCKER: Cancelamos los temporizadores de forma segura
+    t_whales.cancel()
+    t_news.cancel()
+    t_macro.cancel()
+
+#1. Create the instance of server, your name is App
+
+app = FastAPI(title="Solana Data API", lifespan=lifespan)
 #configurate the middleware to Cors
 origins = [
     "http://localhost:5173",
@@ -27,6 +84,17 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+### ENDPOINTS DE LA API (RUTAS)
+@app.get("/")
+def read_root():
+    """
+    Rute path (health check). confirm that the API is alive
+    """
+    return{
+        "status": "online",
+        "message": "добро пожаловать",
+        "data_endpoint": "/api/news"
+    }
 
 @app.get("/api/news")
 def get_latest_news():
@@ -53,16 +121,7 @@ def get_latest_news():
     
     except Exception as e:
         return {"status": "error", "message": str(e)}
-    
-def read_root():
-    """
-    Rute path (health check). confirm that the API is alive
-    """
-    return{
-        "status": "online",
-        "message": "добро пожаловать",
-        "data_endpoint": "/api/news"
-    }
+
         
 @app.get("/api/macro")
 def get_macro_indicators():
@@ -70,11 +129,10 @@ def get_macro_indicators():
     Extrae los indicadores macro de la base de datos, incluyendo fechas y estado.
     """
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row 
+        conn = get_db_connection()
         cursor = conn.cursor()
         
-        # 🔴 ACTULIZADO: Pedimos las nuevas columnas event_date y status
+        # ACTUALIZAMOS: Pedimos las nuevas columnas event_date y status
         cursor.execute("""
             SELECT indicator_name, actual_value, forecast_value, surprise, event_date, status 
             FROM macro_indicators 
@@ -92,12 +150,12 @@ def get_macro_indicators():
 @app.get("/api/whales")
 def get_whale_flows():
     """
+    Extrae los flujos institucionales de la base de datos
     """
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
+        conn = get_db_connection()
         cursor = conn.cursor()
-
+ 
         cursor.execute(
         """
             SELECT direction, amount, exchange, timestamp

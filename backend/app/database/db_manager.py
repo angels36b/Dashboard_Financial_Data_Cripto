@@ -62,12 +62,12 @@ def init_macro_table():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # 🔴 1. LA ORDEN DE DEMOLICIÓN DE LA TABLA VIEJA
-    cursor.execute('DROP TABLE IF EXISTS macro_indicators')
+  
+    
     
     # 🔴 2. LA CONSTRUCCIÓN DE LA TABLA NUEVA (Con event_date y status)
     cursor.execute('''
-        CREATE TABLE macro_indicators (
+        CREATE TABLE IF NOT EXISTS macro_indicators (
             indicator_name TEXT PRIMARY KEY,
             actual_value TEXT,
             forecast_value TEXT,
